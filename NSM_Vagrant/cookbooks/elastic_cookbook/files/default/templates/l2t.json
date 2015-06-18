@@ -1,0 +1,64 @@
+{
+  "template" : "l2t_fluentd-*",
+  "mappings" : {
+    "log2timeline" : {
+      "properties" : {
+        "desc" : {
+          "type" : "string"
+        },
+        "extra" : {
+          "type" : "string"
+        },
+        "filename" : {
+          "type" : "string"
+        },
+        "format" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        },
+        "host" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        },
+        "inode" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        },
+        "l2t_time" : {
+          "type" : "date",
+			"format" : "MM/dd/yyyy HH:mm:ss Z"
+        },
+        "macb" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        },
+        "notes" : {
+          "type" : "string"
+        },
+        "short" : {
+          "type" : "string"
+        },
+        "source" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        },
+        "sourcetype" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        },
+        "type" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        },
+        "user" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        },
+        "version" : {
+          "type" : "string",
+			"index" : "not_analyzed"
+        }
+      }
+    }
+  }
+}

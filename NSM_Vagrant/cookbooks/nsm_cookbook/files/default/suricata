@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+# Init file for suricata
+#
+#
+# chkconfig: 345 52 48
+# description: Network Intrusion Detection System
+#
+# processname: Suricata
+# pidfile: /var/run/suricata.pid
+### BEGIN INIT INFO
+# Provides:          suricata
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     true
+# Short-Description: Start/stop OSSEC Host Intrusion Detection System
+### END INIT INFO
+ 
+ 
+source /lib/lsb/init-functions
+ 
+ 
+### Read configuration
+[ -r "$SYSCONFIG" ] && source "$SYSCONFIG"
+ 
+RETVAL=0
+prog="suricata"
+desc="Suricata IDS"
+ 
+start() {
+    echo -n $"Starting $desc ($prog): "
+ 
+    suricata -D -c /etc/suricata/suricata-debian.yaml -i eth0
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch /var/lock/$prog
+    return $RETVAL
+}
+ 
+stop() {
+    echo -n $"Shutting down $desc ($prog): "
+    kill -9 `pidof $prog`
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f /var/lock/$prog
+    return $RETVAL
+}
+ 
+restart() {
+    stop
+    start
+}
+ 
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  reload)
+    reload
+    ;;
+  condrestart)
+    [ -e /var/lock/$prog ] && restart
+    RETVAL=$?
+    ;;
+  status)
+    status $prog
+    RETVAL=$?
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
+    RETVAL=1
+esac
+ 
+exit $RETVAL

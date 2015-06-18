@@ -1,0 +1,38 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "deb7.8x64_virtualbox"
+  config.vm.box_url = "http://127.0.0.1:8080/deb7.8x64_virtualbox.box"
+  
+  # ssh config
+  # config.ssh.private_key_path = "afa_private_key"
+  # config.ssh.username = "afavm"
+
+  config.vm.define :nsm_server do |nsm_conf|
+    # Set ES and Kibana ports for forwarding
+    nsm_conf.vm.network "forwarded_port", guest: 9200, host: 9200
+    nsm_conf.vm.network "forwarded_port", guest: 5601, host: 5601
+    
+    nsm_conf.vm.provider "virtualbox" do |vb|
+      # Change default name of the machine
+      vb.name = "nsm_server"
+    
+      # Customize the amount of memory on the VM and number of procs
+      vb.memory = "4096"
+	  vb.cpus = 1
+    end
+    
+    # Set up private network for VMs to communicate
+    # nsm_conf.vm.network "private_network", ip: "192.168.54.12"
+    
+    # Set up shared/sync'd folder  
+    nsm_conf.vm.synced_folder "C:/data/", "/data/"
+    
+    # Run Chef recipe
+    nsm_conf.vm.provision "chef_solo" do |chef|
+	  chef.add_recipe "nsm_cookbook"
+    end
+  end
+
+end  
