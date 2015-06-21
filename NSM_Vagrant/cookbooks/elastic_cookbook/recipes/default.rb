@@ -3,22 +3,10 @@
 # Recipe:: ELK Stack
 #
 # Copyright 2015, Jacob Christie
-# jacobchristie@kpmg.com
+# tulane.jacob@gmail.com
 #
 # All rights reserved - Do Not Redistribute
 #
-
-#package 'python-software-properties' do
-#  action :install
-#end
-
-#package 'software-properties-common' do
-#  action :install
-#end
-
-#execute "add_oracle_repo" do
-#  command "add-apt-repository -y ppa:webupd8team/java"
-#end
 
 execute "apt_update" do
   command "apt-get update"
@@ -51,9 +39,6 @@ execute "extract_es" do
   cwd "/tmp/"
 end
 
-#
-# Deprecating the use of Logstash
-#
 #Logstash
 #Version 1.4.2 as of 05/11/2015
 remote_file "/tmp/logstash-1.4.2.tar.gz" do
@@ -77,21 +62,10 @@ remote_file "/tmp/kibana-4.0.2-linux-x64.tar.gz" do
   source "https://download.elastic.co/kibana/kibana/kibana-4.0.2-linux-x64.tar.gz"
 end
 
-#Symlink files to make:
-#	a) execution of bins easier
-#	b) modification of config yml's easier
 execute "extract_kibana" do
   command "tar xvzf kibana-4.0.2-linux-x64.tar.gz && mv /tmp/kibana-4.0.2-linux-x64/* /opt/kibana/"
   cwd "/tmp/"
 end
-
-#execute "link elastic bin" do
-#	command "ln -s /opt/elasticsearch/bin/elasticsearch /usr/bin/elasticsearch"
-#end
-
-#execute "link kibana bin" do
-#	command "ln -s /opt/kibana/bin/kibana /usr/bin/kibana"
-#end
 
 execute "link elastic yml" do
 	command "ln -s /opt/elasticsearch/config/elasticsearch.yml /etc/elasticsearch.yml"
@@ -216,6 +190,7 @@ bash "restart_nginx" do
   code "sudo service nginx restart"
 end
 
+# If you have pre-existing index templates you want to add to your ES, this will do it
 execute "curl_templates" do
   command "for i in *.json; do curl -s -XPOST localhost:9200/_template/template-$i -d @$i &> /dev/null; done"
   cwd "/home/vagrant/templates/"
